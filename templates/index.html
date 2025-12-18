@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jeeva Raagi Dosa Batter Order</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;}
+        .error { color: red; }
+        .success { color: green; }
+        .notice { background: #f0f8ff; padding: 10px; margin-bottom: 15px; border-left: 5px solid #3b83bd; }
+        input, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+        button { background: #3b83bd; color: white; border: none; cursor: pointer;}
+        button:hover { background: #2a5d87; }
+    </style>
+</head>
+<body>
+    <h1>Jeeva Raagi Dosa Batter Order</h1>
+
+    {% if notices %}
+        {% for notice in notices %}
+            <div class="notice">{{ notice }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if errors %}
+        <ul class="error">
+            {% for err in errors %}
+                <li>{{ err }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if success_msg %}
+        <p class="success">{{ success_msg }}</p>
+    {% endif %}
+
+    {% if user %}
+        <span>Welcome, {{ user.username }}!</span>
+        <a href="{{ url_for('logout') }}" style="float: right;">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" style="float: right;">Sign In / Register</a>
+    {% endif %}
+
+    <form action="/order" method="post">
+        <label for="username">Name (required):</label>
+        <input type="text" id="username" name="username" value="{{ username | default('') }}" required>
+
+        <label for="phone">Phone Number (10 digits, required):</label>
+        <input type="text" id="phone" name="phone" maxlength="10" value="{{ phone | default('') }}" required pattern="\d{10}">
+
+        <input type="date" id="order_date" name="order_date" value="{{ order_date | default('') }}" required min="{{ (now + timedelta(days=2)).strftime('%Y-%m-%d') }}">
+
+        <label for="batter_type">Select Dosa Batter Type (required):</label>
+        <select id="batter_type" name="batter_type" required>
+            <option value="">--Select--</option>
+            <option value="Raagi Dosa Batter" {% if batter_type == "Raagi Dosa Batter" %}selected{% endif %}>Raagi Dosa Batter</option>
+            <option value="Foxtail Dosa Batter" {% if batter_type == "Foxtail Dosa Batter" %}selected{% endif %}>Foxtail Dosa Batter</option>
+            <option value="Jowar Dosa Batter" {% if batter_type == "Jowar Dosa Batter" %}selected{% endif %}>Jowar Dosa Batter</option>
+        </select>
+
+        <label for="quantity">Select Quantity (required):</label>
+        <select id="quantity" name="quantity" required>
+            <option value="">--Select--</option>
+            <option value="750 grams" {% if quantity == "750 grams" %}selected{% endif %}>750 grams</option>
+            <option value="1 Kg" {% if quantity == "1 Kg" %}selected{% endif %}>1 Kg</option>
+            <option value="1.5 Kg" {% if quantity == "1.5 Kg" %}selected{% endif %}>1.5 Kg</option>
+        </select>
+
+        <button type="submit">Place Order</button>
+    </form>
+</body>
+</html>
